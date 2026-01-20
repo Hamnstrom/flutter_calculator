@@ -19,7 +19,7 @@ class CalculatorApp extends StatelessWidget {
 }
 
 class CalculatorScreen extends StatefulWidget {
-  const CalculatorScreen({super.key}); 
+  const CalculatorScreen({super.key});
 
   @override
   _CalculatorScreenState createState() => _CalculatorScreenState();
@@ -35,6 +35,12 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         displayText = '0';
       } else if (value == '=') {
         _calculate();
+      } else if (value == '⌫') {
+        if (displayText.length > 1) {
+          displayText = displayText.substring(0, displayText.length - 1);
+        } else {
+          displayText = '0';
+        }
       } else {
         if (displayText == '0' || displayText == 'Error') {
           displayText = value;
@@ -48,7 +54,6 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   // Calculation logic
   void _calculate() {
     try {
-      // Parse and evaluate the expression
       Parser p = Parser();
       Expression exp = p.parse(displayText);
       ContextModel cm = ContextModel();
@@ -61,43 +66,70 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Calculator')),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            padding: EdgeInsets.all(20),
-            alignment: Alignment.centerRight,
-            child: Text(
-              displayText,
-              style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(title: Text('Calculator')),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              padding: EdgeInsets.all(20),
+              alignment: Alignment.centerRight,
+              child: Text(
+                displayText,
+                style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+              ),
             ),
-          ),
-          Divider(),
-          _buildButtonRow(['C', '/', '*', '-']),
-          _buildButtonRow(['7', '8', '9', '+']),
-          _buildButtonRow(['4', '5', '6', '=']),
-          _buildButtonRow(['1', '2', '3', '.']),
-          _buildButtonRow(['0']),
-        ],
+            Divider(),
+            _buildButtonRow(['C', '⌫']),
+            _buildButtonRow(['7', '8', '9', '*']),
+            _buildButtonRow(['4', '5', '6', '-']),
+            _buildButtonRow(['1', '2', '3', '+']),
+            _buildButtonRow(['0', '.', "=", '/']),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildButtonRow(List<String> buttons) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: buttons.map((btn) {
-        return ElevatedButton(
-          onPressed: btn.isEmpty ? null : () => _onButtonPressed(btn),
-          style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.all(20),
-            minimumSize: Size(70, 70),
-          ),
-          child: Text(btn, style: TextStyle(fontSize: 24)),
-        );
-      }).toList(),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: buttons.map((btn) {
+          // Set different colors for "C" and "⌫"
+          Color? buttonColor;
+          buttonColor = Color.fromARGB(255, 204, 204, 204);
+          if (btn == 'C') {
+            buttonColor = Colors.red; // Red color for clear
+          } else if (btn == '⌫') {
+            buttonColor = Colors.orange; // Orange color for backspace
+          } else if (btn == "=") {
+            //buttonColor = Colors.blue;
+          } else if (btn == "+" || btn == "-" || btn == "*" || btn == "/") {
+            buttonColor = Colors.green; // Orange color for backspace
+          }
+
+          return Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: ElevatedButton(
+                onPressed: btn.isEmpty ? null : () => _onButtonPressed(btn),
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.all(20),
+                  minimumSize: Size(70, 70),
+                  backgroundColor: buttonColor, // Apply custom color
+                ),
+                child: Text(
+                  btn,
+                  style: TextStyle(fontSize: 24, color: Colors.black),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
     );
   }
 }
