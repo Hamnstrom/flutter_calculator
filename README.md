@@ -13,4 +13,4 @@ A simple calculator app built with *Flutter* and the *math_expressions* library 
 * *Row*: Arranges buttons horizontally in each row.
 * *ElevatedButton*: Interactive buttons for digits, operators, and actions (*e.g., "C", "=", ".", etc.*).
 
-<img width="216" height="480" alt="Screenshot_1768905167" src="https://github.com/user-attachments/assets/474b20ec-6599-426d-8204-21d417377dd0" />
+<img width="216" height="480" alt="Screenshot_1768905167" src="/Screenshot.png" />
